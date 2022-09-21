@@ -1,30 +1,24 @@
-<script lang="ts">
-import { defineComponent, type PropType } from "vue";
+<script lang="ts" setup>
+import type { PropType } from "vue";
+import { reactive, ref } from "vue";
 
-export default defineComponent({
-  data() {
-    return {
-      headerText: "Jackets",
-    };
-  },
-  emits: ["changeFilter"],
-  props: {
-    headerT: String,
-    listToFilter: Array as PropType<String[]>,
-  },
-  methods: {
-    doFilter(event: Event) {
-      const value = (event?.target as HTMLSelectElement).value;
-      console.log("doFilter", value);
-      this.$emit("changeFilter", value);
-    },
-    doSort(event: Event) {
-      const value = (event?.target as HTMLSelectElement).value;
-
-      // this.$emit("changeSort", value);
-    },
-  },
+const headerText = ref<String>("");
+const emit = defineEmits(["changeFilter"]);
+const props = defineProps({
+  headerT: String,
+  listToFilter: Array as PropType<String[]>,
 });
+function doFilter(event: Event) {
+  const value = (event?.target as HTMLSelectElement).value;
+  console.log("doFilter", value);
+  emit("changeFilter", value);
+}
+function doSort(event: Event) {
+  const value = (event?.target as HTMLSelectElement).value;
+
+  // this.$emit("changeSort", value);
+}
+
 </script>
 <template>
   <nav class="product-filter">

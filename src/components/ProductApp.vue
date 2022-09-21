@@ -1,22 +1,39 @@
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import { reactive, ref } from "vue";
 import type { Product } from "../types/types";
 import type { PropType } from "vue";
+import { cartProductList } from "@/stores/cartList";
+import { storeToRefs } from "pinia";
 
-export default defineComponent({
-  data() {
-    return {
-      headerText: "Jackets",
-    };
+const store = cartProductList();
+
+const headerText = ref("Jackets");
+const props = defineProps({
+  headerT: String,
+  productData: {
+    type: Object as PropType<Product>,
+    required: true,
   },
-  props: {
-    headerT: String,
-    productData: {
-      type: Object as PropType<Product>,
-      required: true,
-    },
-  },
+  cartList: Boolean,
 });
+function addToCart() {
+  store.addToCart(props.productData);
+}
+function removeFromCart() {
+  store.removeFromCart(props.productData);
+}
+function increcment() {
+  store.incrementProduct(props.productData);
+}
+function decrecment() {
+  store.decrementProduct(props.productData);
+}
+function getCartItemCount() {
+  const a = store.productsList.filter(
+    (p) => p.product.id == props.productData.id
+  );
+  return a.length ? a[0].count : 0;
+}
 </script>
 <template>
   <div class="product-card">
@@ -33,6 +50,11 @@ export default defineComponent({
       <h5>{{ productData.description }}</h5>
       <h6>$ {{ productData.price }}</h6>
     </div>
+    <button @click="addToCart" v-if="!cartList">Add to cart</button>
+    <button @click="increcment">+</button>
+    <div>{{ getCartItemCount() }}</div>
+    <button>-</button>
+    <button @click="removeFromCart" v-if="cartList">remove</button>
   </div>
 </template>
 <style>
